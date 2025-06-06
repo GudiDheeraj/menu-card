@@ -33,7 +33,7 @@ jobs:
           mkdir -p dist
           
           # Copy HTML file
-          cp index.html dist/
+          cp menu.html dist/
           
           # Copy any other static files if they exist
           if [ -f "style.css" ]; then cp style.css dist/; fi
