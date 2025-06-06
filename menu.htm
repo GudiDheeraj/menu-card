@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxe Bistro - 3D Menu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1000px;
+            overflow-x: hidden;
+        }
+
+        .menu-container {
+            position: relative;
+            width: 400px;
+            height: 600px;
+            transform-style: preserve-3d;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: rotateY(0deg) translateY(0px); }
+            50% { transform: rotateY(5deg) translateY(-20px); }
+        }
+
+        .menu-card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            border-radius: 20px;
+            box-shadow: 
+                0 20px 40px rgba(0,0,0,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.8);
+            transform-style: preserve-3d;
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .menu-card:hover {
+            transform: rotateX(10deg) rotateY(-10deg) translateZ(50px);
+            box-shadow: 
+                0 30px 60px rgba(0,0,0,0.4),
+                inset 0 1px 0 rgba(255,255,255,0.9);
+        }
+
+        .menu-header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .restaurant-name {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+            to { text-shadow: 2px 2px 20px rgba(255,255,255,0.5); }
+        }
+
+        .restaurant-subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+
+        .menu-content {
+            padding: 30px 25px;
+            height: calc(100% - 140px);
+            overflow-y: auto;
+        }
+
+        .menu-section {
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideIn 0.8s ease-out forwards;
+        }
+
+        .menu-section:nth-child(1) { animation-delay: 0.2s; }
+        .menu-section:nth-child(2) { animation-delay: 0.4s; }
+        .menu-section:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            color: #2c3e50;
+            border-bottom: 3px solid #ff6b6b;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ff6b6b, #ee5a24);
+            animation: expandLine 2s ease-out forwards;
+        }
+
+        @keyframes expandLine {
+            to { width: 100%; }
+        }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,107,107,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .menu-item:hover {
+            background: rgba(255,107,107,0.05);
+            transform: translateX(10px) scale(1.02);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .menu-item:hover::before {
+            left: 100%;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .item-description {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            line-height: 1.4;
+        }
+
+        .item-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ff6b6b;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .floating-element {
+            position: absolute;
+            opacity: 0.1;
+            animation: floatAround 15s linear infinite;
+        }
+
+        .floating-element:nth-child(1) {
+            top: 10%;
+            left: 80%;
+            animation-delay: 0s;
+            font-size: 2rem;
+        }
+
+        .floating-element:nth-child(2) {
+            top: 60%;
+            left: 10%;
+            animation-delay: 5s;
+            font-size: 1.5rem;
+        }
+
+        .floating-element:nth-child(3) {
+            top: 30%;
+            left: 70%;
+            animation-delay: 10s;
+            font-size: 2.5rem;
+        }
+
+        @keyframes floatAround {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(-30px, -30px) rotate(90deg); }
+            50% { transform: translate(-60px, 30px) rotate(180deg); }
+            75% { transform: translate(30px, 60px) rotate(270deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+
+        .menu-card:hover .floating-element {
+            opacity: 0.2;
+            animation-duration: 10s;
+        }
+
+        /* Scrollbar styling */
+        .menu-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .menu-content::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+            border-radius: 3px;
+        }
+
+        .menu-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            border-radius: 3px;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 480px) {
+            .menu-container {
+                width: 90vw;
+                height: 80vh;
+            }
+            
+            .restaurant-name {
+                font-size: 2rem;
+            }
+            
+            .menu-content {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-container">
+        <div class="menu-card">
+            <div class="floating-elements">
+                <div class="floating-element">🍽️</div>
+                <div class="floating-element">🥂</div>
+                <div class="floating-element">⭐</div>
+            </div>
+            
+            <div class="menu-header">
+                <h1 class="restaurant-name">Luxe Bistro</h1>
+                <p class="restaurant-subtitle">Fine Dining Experience</p>
+            </div>
+            
+            <div class="menu-content">
+                <div class="menu-section">
+                    <h2 class="section-title">Appetizers</h2>
+                    <div class="menu-item">
+                        <div class="item-info">
+                            <div class="item-name">Truffle Arancini</div>
+                            <div class="item-description">Crispy risotto balls with black truffle, parmesan, and herb oil</div>
+                        </div>
+                        <div class="item-price">$18</div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="item-info">
+                            <div class="item-name">Seared Scallops</div>
+                            <div class="item-description">Pan-seared scallops with cauliflower purée and pancetta</div>
+                        </div>
+                        <div class="item-price">$24</div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="item-info">
+                            <div class="item-name">Burrata Caprese</div>
+                            <div class="item-description">Fresh burrata with heirloom tomatoes and basil oil</div>
+                        </div>
+                        <div class="item-price">$16</div>
+                    </div>
+                </div>
+
+                <div class="menu-section">
+                    <h2 class="section-title">Main Courses</h2>
+                    <div class="menu-item">
+                        <div class="item-info">
+                            <div class="item-name">Wagyu Ribeye</div>
+                            <div class="item-description">12oz A5 Wagyu ribeye with roasted bone marrow and red wine jus</div>
+                        </div>
+                        <div class="item-price">$85</div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="item-info">
+                            <div class="item-name">Lobster Thermidor</div>
+                            <div class="item-description">Whole lobster with brandy cream sauce and gruyère gratin</div>
+                        </div>
+                        <div class="item-price">$52</div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="item-info">
+                            <div class="item-name">Duck Confit</div>
+                            <div class="item-description">Slow-cooked duck leg with cherry gastrique and fondant potato</div>
+                        </div>
+                        <div class="item-price">$38</div>
+                    </div>
+                </div>
+
+                <div class="menu-section">
+                    <h2 class="section-title">Desserts</h2>
+                    <div class="menu-item">
+                        <div class="item-info">
+                            <div class="item-name">Chocolate Soufflé</div>
+                            <div class="item-description">Warm dark chocolate soufflé with vanilla bean ice cream</div>
+                        </div>
+                        <div class="item-price">$14</div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="item-info">
+                            <div class="item-name">Crème Brûlée</div>
+                            <div class="item-description">Classic vanilla custard with caramelized sugar and fresh berries</div>
+                        </div>
+                        <div class="item-price">$12</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add interactive hover effects
+        const menuCard = document.querySelector('.menu-card');
+        const menuItems = document.querySelectorAll('.menu-item');
+
+        // Enhanced card tilting based on mouse position
+        menuCard.addEventListener('mousemove', (e) => {
+            const rect = menuCard.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            
+            const rotateX = (y / rect.height) * -20;
+            const rotateY = (x / rect.width) * 20;
+            
+            menuCard.style.transform = `
+                rotateX(${rotateX}deg) 
+                rotateY(${rotateY}deg) 
+                translateZ(50px)
+            `;
+        });
+
+        menuCard.addEventListener('mouseleave', () => {
+            menuCard.style.transform = 'rotateX(0deg) rotateY(0deg) translateZ(0px)';
+        });
+
+        // Add staggered animation to menu items
+        menuItems.forEach((item, index) => {
+            item.addEventListener('mouseenter', () => {
+                item.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+
+        // Add particle effect on card hover
+        menuCard.addEventListener('mouseenter', () => {
+            createParticles();
+        });
+
+        function createParticles() {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.style.cssText = `
+                        position: absolute;
+                        width: 4px;
+                        height: 4px;
+                        background: radial-gradient(circle, #ff6b6b, transparent);
+                        border-radius: 50%;
+                        pointer-events: none;
+                        left: ${Math.random() * 100}%;
+                        top: ${Math.random() * 100}%;
+                        animation: sparkle 2s ease-out forwards;
+                        z-index: 1000;
+                    `;
+                    
+                    menuCard.appendChild(particle);
+                    
+                    setTimeout(() => {
+                        particle.remove();
+                    }, 2000);
+                }, i * 200);
+            }
+        }
+
+        // Add sparkle animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes sparkle {
+                0% {
+                    transform: scale(0) rotate(0deg);
+                    opacity: 1;
+                }
+                50% {
+                    transform: scale(1) rotate(180deg);
+                    opacity: 0.8;
+                }
+                100% {
+                    transform: scale(0) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
